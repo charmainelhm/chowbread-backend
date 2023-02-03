@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { createError } from "../utils/error.js";
 const prisma = new PrismaClient();
 
 export const createUser = async (
@@ -20,7 +21,12 @@ export const createUser = async (
 
     res.status(200).json(user);
   } catch (err: any) {
-    console.log(err);
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      next(createError(409, `Email has been taken`));
+    } else next(err);
   }
 };
 
@@ -33,7 +39,7 @@ export const getAllUsers = async (
     const users = await prisma.user.findMany();
     res.status(200).json(users);
   } catch (err: any) {
-    console.log(err);
+    next(err);
   }
 };
 
@@ -51,7 +57,7 @@ export const getUserById = async (
 
     res.status(200).json(user);
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
