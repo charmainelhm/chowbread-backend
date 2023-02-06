@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import userRouter from "./routers/user-router.js";
+import sessionRouter from "./routers/session-router.js";
 dotenv.config();
 const app = express();
 
@@ -11,6 +12,7 @@ interface ResponseError extends Error {
 app.use(express.json()); // body parser
 
 app.use("/api/user", userRouter);
+app.use("/api/session", sessionRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("ChowBread Backend");
