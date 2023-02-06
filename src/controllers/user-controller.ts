@@ -16,6 +16,11 @@ export const createUser = async (
       data: {
         ...req.body,
         password: hashedPassword,
+        session: {
+          create: {
+            isValid: false,
+          },
+        },
       },
     });
 
@@ -76,18 +81,18 @@ export const getUserById = async (
 //   }
 // };
 
-// export const deleteUserById = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const response = await prisma.user.delete({
-//       where: { id: req.params.id },
-//     });
+export const deleteUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const response = await prisma.user.delete({
+      where: { id: req.params.id },
+    });
 
-//     res.status(200).send(response);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    res.status(200).send(response);
+  } catch (err) {
+    console.log(err);
+  }
+};
