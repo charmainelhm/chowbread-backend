@@ -77,8 +77,29 @@ export const getSession = async (
       },
     });
 
-    if (!session) return next(createError(404, "No user found!"));
+    if (!session) return next(createError(404, "User not found!"));
     res.status(200).json(session);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const invalidateSession = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const session: Session = await prisma.session.update({
+      where: {
+        userId: req.params.userId,
+      },
+      data: {
+        isValid: false,
+      },
+    });
+
+    res.status(200).json({ access_token: null, refresh_token: null });
   } catch (err) {
     next(err);
   }
