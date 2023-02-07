@@ -5,6 +5,7 @@ import {
   getAllExpenses,
   getUserExpenses,
   updateUserExpense,
+  deleteExpense,
 } from "../controllers/expense-controller.js";
 const router = express.Router();
 
@@ -17,5 +18,6 @@ router.get("/:userId", verifyToken, getUserExpenses);
 //update expense by id
 router.put("/:expenseId", verifyToken, updateUserExpense);
 //delete expense by id
+router.delete("/:expenseId", verifyToken, deleteExpense);
 
 export default router;
