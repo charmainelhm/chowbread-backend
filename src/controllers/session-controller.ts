@@ -72,17 +72,23 @@ export const getSession = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  try {
-    const session: Session | null = await prisma.session.findUnique({
-      where: {
-        userId: req.params.userId,
-      },
-    });
+  if (req.params.userId === req.user.id) {
+    try {
+      const session: Session | null = await prisma.session.findUnique({
+        where: {
+          userId: req.params.userId,
+        },
+      });
 
-    if (!session) return next(createError(404, "User not found!"));
-    res.status(200).json(session);
-  } catch (err) {
-    next(err);
+      if (!session) return next(createError(404, "User not found!"));
+      res.status(200).json(session);
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    return next(
+      createError(403, "You are not authorised to perform this operation!")
+    );
   }
 };
 
@@ -91,18 +97,24 @@ export const invalidateSession = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  try {
-    const session: Session = await prisma.session.update({
-      where: {
-        userId: req.params.userId,
-      },
-      data: {
-        isValid: false,
-      },
-    });
+  if (req.params.userId === req.user.id) {
+    try {
+      const session: Session = await prisma.session.update({
+        where: {
+          userId: req.params.userId,
+        },
+        data: {
+          isValid: false,
+        },
+      });
 
-    res.status(200).json({ access_token: null, refresh_token: null });
-  } catch (err) {
-    next(err);
+      res.status(200).json({ access_token: null, refresh_token: null });
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    return next(
+      createError(403, "You are not authorised to perform this operation!")
+    );
   }
 };
