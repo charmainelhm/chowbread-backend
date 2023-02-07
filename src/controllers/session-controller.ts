@@ -34,15 +34,17 @@ export const createSession = async (
       email: string;
       firstName: string;
       lastName: string;
+      isAdmin: boolean;
     } = {
       id: user.id,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      isAdmin: user.isAdmin,
     };
 
     const accessToken: string = jwt.sign(userData, accessTokenSecret, {
-      expiresIn: "15m",
+      expiresIn: "30d",
     });
 
     const refreshToken: string = jwt.sign(userData, refreshTokenSecret, {
