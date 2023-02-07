@@ -2,19 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { createError } from "../utils/error.js";
 
-interface customRequest extends Request {
-  headers: {
-    access_token?: string;
-  };
-  user?: any;
-}
-
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET ?? "";
-export const verifyToken = (
-  req: customRequest,
-  res: Response,
-  next: NextFunction
-) => {
+
+const verifyToken = (req: Request, res: Response, next: NextFunction): any => {
   const token: string | null = (req.headers.access_token as string) || null;
   if (!token) return next(createError(404, "You are not authenticated!"));
 
@@ -28,3 +18,5 @@ export const verifyToken = (
   // generate new access token if refresh token is valid
   // validate information given in the access token
 };
+
+export default verifyToken;
