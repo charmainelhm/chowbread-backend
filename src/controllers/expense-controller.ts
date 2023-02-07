@@ -52,12 +52,40 @@ export const getUserExpenses = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (req.user.id === req.params.userId) {
+    try {
+      const userExpenses: Expense[] = await prisma.expense.findMany({
+        where: { userId: req.user.id },
+      });
+
+      res.status(200).json(userExpenses);
+    } catch (err: any) {
+      console.log(err);
+      next(err);
+    }
+  } else {
+    return next(
+      createError(403, "You are not authorised to perform this operation!")
+    );
+  }
+};
+
+export const updateUserExpense = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
-    const userExpenses: Expense[] = await prisma.expense.findMany({
-      where: { userId: req.user.id },
+    const updatedExpense: Expense = await prisma.expense.update({
+      where: {
+        id: req.params.expenseId,
+      },
+      data: {
+        ...req.body,
+      },
     });
 
-    res.status(200).json(userExpenses);
+    res.status(200).json(updatedExpense);
   } catch (err: any) {
     console.log(err);
     next(err);
