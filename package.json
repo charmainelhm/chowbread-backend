@@ -7,7 +7,8 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon dist/app.js",
-    "build": "tsc -w"
+    "build": "tsc -w",
+    "start": "node dist/app.js"
   },
   "keywords": [],
   "author": "",
