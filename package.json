@@ -7,7 +7,7 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon dist/app.js",
-    "start": "node dist/app.js"
+    "start": "npm run build -p tsconfig.build.json && node./dist/app.js"
   },
   "keywords": [],
   "author": "",
