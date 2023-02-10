@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { createError } from "../utils/error.js";
 const prisma = new PrismaClient();
@@ -10,6 +10,14 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
+    const emailExist = await prisma.user.findUnique({
+      where: { email: req.body.email },
+    });
+
+    if (emailExist) {
+      return next(createError(409, "Email has been taken"));
+    }
+
     const salt: string = bcrypt.genSaltSync(10);
     const hashedPassword: string = bcrypt.hashSync(req.body.password, salt);
     const user = await prisma.user.create({
@@ -26,12 +34,7 @@ export const createUser = async (
 
     res.status(200).json(user);
   } catch (err: any) {
-    if (
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === "P2002"
-    ) {
-      next(createError(409, `Email has been taken`));
-    } else next(err);
+    next(err);
   }
 };
 
