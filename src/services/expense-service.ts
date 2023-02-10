@@ -1,11 +1,9 @@
-import { PrismaClient, Expense } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export const querySingleExpense = async (
-  expenseId: string
-): Promise<Expense | null> => {
+export const querySingleExpense = async (expenseId: string) => {
   try {
-    const expense: Expense | null = await prisma.expense.findUnique({
+    const expense = await prisma.expense.findUnique({
       where: { id: expenseId },
     });
 

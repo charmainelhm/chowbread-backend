@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { Expense, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { createError } from "../utils/error.js";
 import { querySingleExpense } from "../services/expense-service.js";
 const prisma = new PrismaClient();
@@ -10,7 +10,7 @@ export const createExpense = async (
   next: NextFunction
 ) => {
   try {
-    const expense: Expense = await prisma.expense.create({
+    const expense = await prisma.expense.create({
       data: {
         ...req.body,
         user: {
@@ -35,7 +35,7 @@ export const getAllExpenses = async (
 ) => {
   if (req.user.isAdmin) {
     try {
-      const expenses: Expense[] = await prisma.expense.findMany();
+      const expenses = await prisma.expense.findMany();
       res.status(200).json(expenses);
     } catch (err: any) {
       console.log(err);
@@ -55,7 +55,7 @@ export const getUserExpenses = async (
 ) => {
   if (req.user.id === req.params.userId) {
     try {
-      const userExpenses: Expense[] = await prisma.expense.findMany({
+      const userExpenses = await prisma.expense.findMany({
         where: { userId: req.user.id },
       });
 
@@ -77,11 +77,9 @@ export const updateUserExpense = async (
   next: NextFunction
 ) => {
   try {
-    const expense: Expense | null = await querySingleExpense(
-      req.params.expenseId
-    );
+    const expense = await querySingleExpense(req.params.expenseId);
     if (expense?.userId === req.user.id) {
-      const updatedExpense: Expense = await prisma.expense.update({
+      const updatedExpense = await prisma.expense.update({
         where: {
           id: req.params.expenseId,
         },
@@ -107,9 +105,7 @@ export const deleteExpense = async (
   next: NextFunction
 ) => {
   try {
-    const expense: Expense | null = await querySingleExpense(
-      req.params.expenseId
-    );
+    const expense = await querySingleExpense(req.params.expenseId);
     if (expense?.userId === req.user.id) {
       const data = await prisma.expense.delete({
         where: {
