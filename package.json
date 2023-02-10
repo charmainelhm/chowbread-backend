@@ -7,7 +7,6 @@
   "scripts": {
     "watch": "tsc -w",
     "dev": "nodemon dist/app.js",
-    "build": "tsc --build",
     "start": "npm run watch -p tsconfig.json && node dist/app.js"
   },
   "keywords": [],
