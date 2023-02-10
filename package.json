@@ -8,7 +8,7 @@
     "watch": "tsc -w",
     "dev": "nodemon dist/app.js",
     "build": "npx tsc",
-    "start": "concurrently \"npx tsc --watch\" \"nodemon -q dist/app.js\""
+    "start": "npm run build -p tsconfig.json && node ./dist/app.js"
   },
   "keywords": [],
   "author": "",
