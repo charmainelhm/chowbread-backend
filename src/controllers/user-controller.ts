@@ -40,11 +40,17 @@ export const getAllUsers = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const users = await prisma.user.findMany();
-    res.status(200).json(users);
-  } catch (err: any) {
-    next(err);
+  if (req.user.isAdmin) {
+    try {
+      const users = await prisma.user.findMany();
+      res.status(200).json(users);
+    } catch (err: any) {
+      next(err);
+    }
+  } else {
+    return next(
+      createError(403, "You are not authorised to perform this operation!")
+    );
   }
 };
 
@@ -53,16 +59,22 @@ export const getUserById = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: req.params.id,
-      },
-    });
+  if (req.user.isAdmin || req.user.id === req.params.id) {
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: req.params.id,
+        },
+      });
 
-    res.status(200).json(user);
-  } catch (err) {
-    next(err);
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    return next(
+      createError(403, "You are not authorised to perform this operation!")
+    );
   }
 };
 
@@ -86,13 +98,18 @@ export const deleteUserById = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const response = await prisma.user.delete({
-      where: { id: req.params.id },
-    });
+  if (req.user.id === req.params.id) {
+    try {
+      const response = await prisma.user.delete({
+        where: { id: req.params.id },
+      });
 
-    res.status(200).send(response);
-  } catch (err) {
-    console.log(err);
-  }
+      res.status(200).send(response);
+    } catch (err) {
+      console.log(err);
+    }
+  } else
+    return next(
+      createError(403, "You are not authorised to perform this operation!")
+    );
 };
