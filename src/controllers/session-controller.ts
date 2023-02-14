@@ -5,9 +5,10 @@ import jwt from "jsonwebtoken";
 import { createError } from "../utils/error.js";
 const prisma = new PrismaClient();
 import { User, Session } from "../models/index.js";
+import { createUserSession } from "../services/session-service.js";
 
-const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET ?? "";
-const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET ?? "";
+// const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET ?? "";
+// const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET ?? "";
 
 export const createSession = async (
   req: Request,
@@ -29,39 +30,9 @@ export const createSession = async (
       return next(createError(404, "Email and password do not match!"));
     }
 
-    const userData: {
-      id: string;
-      email: string;
-      firstName: string;
-      lastName: string;
-      isAdmin: boolean;
-    } = {
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      isAdmin: user.isAdmin,
-    };
+    const loginCredentials = await createUserSession(user);
 
-    const accessToken: string = jwt.sign(userData, accessTokenSecret, {
-      expiresIn: "30d",
-    });
-
-    const refreshToken: string = jwt.sign(userData, refreshTokenSecret, {
-      expiresIn: "30d",
-    });
-
-    const session: Session = await prisma.session.update({
-      where: {
-        userId: userData.id,
-      },
-      data: {
-        isValid: true,
-      },
-    });
-    res
-      .status(200)
-      .json({ access_token: accessToken, refresh_token: refreshToken });
+    res.status(200).json(loginCredentials);
   } catch (err) {
     next(err);
   }

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { createError } from "../utils/error.js";
+import { createUserSession } from "../services/session-service.js";
 const prisma = new PrismaClient();
 
 export const createUser = async (
@@ -32,7 +33,9 @@ export const createUser = async (
       },
     });
 
-    res.status(200).json(user);
+    const loginCredentials = await createUserSession(user);
+
+    res.status(200).json(loginCredentials);
   } catch (err: any) {
     next(err);
   }
