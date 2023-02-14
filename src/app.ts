@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import userRouter from "./routers/user-router.js";
 import sessionRouter from "./routers/session-router.js";
 import expenseRouter from "./routers/expense-router.js";
+import cors from "cors";
 dotenv.config();
 const app = express();
 
@@ -11,6 +12,7 @@ interface ResponseError extends Error {
 }
 
 app.use(express.json()); // body parser
+app.use(cors({ origin: true, credentials: true }));
 
 app.use("/api/user", userRouter);
 app.use("/api/session", sessionRouter);
