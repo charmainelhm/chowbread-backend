@@ -13,6 +13,6 @@ router.post("/", createSession);
 router.get("/user", verifyToken, getSession);
 // router.get("/:userId", verifyToken, getSession);
 // invalidate user session
-router.patch("/:userId", verifyToken, invalidateSession);
+router.post("/:userId", verifyToken, invalidateSession);
 
 export default router;

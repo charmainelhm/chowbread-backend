@@ -76,7 +76,7 @@ export const invalidateSession = async (
         },
       });
 
-      res.status(200).json({ access_token: null, refresh_token: null });
+      res.status(200).json({ logOutSuccess: true });
     } catch (err) {
       next(err);
     }
