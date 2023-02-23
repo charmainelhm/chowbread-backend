@@ -10,7 +10,8 @@ const router = express.Router();
 // create user session
 router.post("/", createSession);
 // get user session
-router.get("/:userId", verifyToken, getSession);
+router.get("/user", verifyToken, getSession);
+// router.get("/:userId", verifyToken, getSession);
 // invalidate user session
 router.patch("/:userId", verifyToken, invalidateSession);
 

@@ -43,23 +43,20 @@ export const getSession = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  if (req.params.userId === req.user.id) {
-    try {
-      const session: Session | null = await prisma.session.findUnique({
-        where: {
-          userId: req.params.userId,
-        },
-      });
+  try {
+    const session: Session | null = await prisma.session.findUnique({
+      where: {
+        userId: req.user.id,
+      },
+    });
 
-      if (!session) return next(createError(404, "User not found!"));
-      res.status(200).json(session);
-    } catch (err) {
-      next(err);
-    }
-  } else {
-    return next(
-      createError(403, "You are not authorised to perform this operation!")
-    );
+    if (!session) return next(createError(404, "User not found!"));
+
+    res.status(200).json({
+      validSession: session.isValid,
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
